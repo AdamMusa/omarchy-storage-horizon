@@ -97,13 +97,19 @@ class SuiteBackend
   end
 
   def scan_system
-    lines = command_text(["df", "-P", "-B1"]).lines.drop(1).first(64)
+    lines = command_text(["findmnt", "--real", "--bytes", "--raw", "--noheadings", "--output", "TARGET,FSTYPE,SIZE,USED,AVAIL"]).lines.first(64)
     points = @settings["mount_points"].is_a?(Hash) ? @settings["mount_points"] : {}
+    seen_volumes = {}
     rows = lines.filter_map do |line|
       fields = line.split
-      next if fields.length < 6
-      total, used, mount = fields[1].to_i, fields[2].to_i, fields[5]
+      next if fields.length < 5
+      mount, filesystem = fields[0], fields[1]
+      total, used, free = fields[2].to_i, fields[3].to_i, fields[4].to_i
       next if total <= 0
+      next if mount.start_with?("/run/credentials/") || mount.start_with?("/var/lib/docker/") || mount.start_with?("/var/lib/containers/")
+      volume_key = "#{filesystem}:#{total}:#{used}:#{free}"
+      next if seen_volumes[volume_key]
+      seen_volumes[volume_key] = true
       history = points[mount].is_a?(Array) ? points[mount] : []
       history << [Time.now.to_i, used]
       history = history.last(96)
@@ -119,7 +125,8 @@ class SuiteBackend
       else
         "no sustained growth"
       end
-      item(mount, "#{percent(used, total)}% used · #{horizon}", percent(used, total) >= 90 ? "tight" : "observing", human_bytes(total - used) + " free")
+      used_percent = percent(used, total)
+      item(mount, "#{used_percent}% used · #{horizon}", used_percent >= 90 ? "tight" : "observing", human_bytes(free) + " free")
     end
     @settings["mount_points"] = points.to_a.last(32).to_h
     @score = rows.length

@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "izeesoft.storage-horizon",
+  "name": "Storage Horizon",
+  "version": "0.1.0",
+  "author": "Adam Moussa Ali",
+  "license": "MIT",
+  "description": "Per-mount storage growth history with projected exhaustion horizons.",
+  "kinds": [
+    "service",
+    "bar-widget",
+    "panel"
+  ],
+  "keepLoaded": true,
+  "entryPoints": {
+    "service": "Service.qml",
+    "barWidget": "BarWidget.qml",
+    "panel": "Panel.qml"
+  },
+  "barWidget": {
+    "displayName": "Storage Horizon",
+    "description": "See when disks are filling, not only how full they are now.",
+    "category": "System",
+    "allowMultiple": false,
+    "defaultSection": "right"
+  }
+}

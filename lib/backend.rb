@@ -179,6 +179,7 @@ class SuiteBackend
     nil
   end
 
+
   def relative_files(root)
     return [] unless File.directory?(root)
     result = []

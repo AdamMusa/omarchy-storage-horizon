@@ -184,6 +184,7 @@ class SuiteBackend
     nil
   end
 
+
   def relative_files(root)
     return [] unless File.directory?(root)
     result = []
@@ -306,6 +307,8 @@ OmarchyUI.plugin do
   state :primary, ""
   state :secondary, ""
   state :compose, false
+  state :page, 0
+  state :selected_plugin, ""
 
   refresh = proc do
     state.snapshot = backend.refresh
@@ -317,10 +320,10 @@ OmarchyUI.plugin do
     value = status.to_s.downcase
     danger = false
     healthy = false
-    %w[broken critical missing mismatch drift inactive slow tight hotspot invalid].each do |token|
+    %w[broken critical missing mismatch drift inactive slow tight risk invalid attention].each do |token|
       danger = true if value.include?(token)
     end
-    %w[ready valid verified finished aligned unique internal familiar steady covered available detected normal].each do |token|
+    %w[ready valid verified finished aligned unique internal familiar steady covered available detected normal active loaded].each do |token|
       healthy = true if value.include?(token)
     end
     if danger
@@ -336,10 +339,10 @@ OmarchyUI.plugin do
     value = status.to_s.downcase
     danger = false
     healthy = false
-    %w[broken critical missing mismatch drift inactive slow tight hotspot invalid].each do |token|
+    %w[broken critical missing mismatch drift inactive slow tight risk invalid attention].each do |token|
       danger = true if value.include?(token)
     end
-    %w[ready valid verified finished aligned unique internal familiar steady covered available detected normal].each do |token|
+    %w[ready valid verified finished aligned unique internal familiar steady covered available detected normal active loaded].each do |token|
       healthy = true if value.include?(token)
     end
     if danger
@@ -407,7 +410,7 @@ OmarchyUI.plugin do
                     text entry.fetch("meta", ""), style: :caption, width: 110
                   end
                   progress(percent_used, minimum: 0, maximum: 100, width: 590, height: 5, color: status_color.call(entry.fetch("status", "")))
-                  text entry.fetch("detail", "").split(" · ", 2).last.to_s, style: :caption
+                      text entry.fetch("detail", "").split(" · ").last.to_s, style: :caption
                 end
                 separator unless index == [entries.length, 12].min - 1
               end

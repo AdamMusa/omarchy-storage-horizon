@@ -321,6 +321,18 @@ OmarchyUI.plugin do
     end
   end
 
+  first_number = lambda do |value|
+    number = 0
+    value.to_s.split.each do |token|
+      candidate = token.to_i
+      if candidate > 0
+        number = candidate
+        break
+      end
+    end
+    number
+  end
+
   bar_widget do
     row spacing: 7 do
       icon :folder, color: "#a29bfe"
@@ -356,7 +368,7 @@ OmarchyUI.plugin do
                       end
             else
               entries.first(12).each_with_index do |entry, index|
-                percent_used = entry.fetch("detail", "")[/d+/].to_i
+                percent_used = first_number.call(entry.fetch("detail", ""))
                 column spacing: 6 do
                   row spacing: 8 do
                     icon :folder, color: status_color.call(entry.fetch("status", ""))
@@ -365,7 +377,7 @@ OmarchyUI.plugin do
                     text entry.fetch("meta", ""), style: :caption, width: 110
                   end
                   progress(percent_used, width: 590, height: 5, color: status_color.call(entry.fetch("status", "")))
-                  text entry.fetch("detail", "").sub(/^d+% used · /, ""), style: :caption
+                  text entry.fetch("detail", "").split(" · ", 2).last.to_s, style: :caption
                 end
                 separator unless index == [entries.length, 12].min - 1
               end

@@ -115,8 +115,15 @@ class SuiteBackend
       points[mount] = history
       delta_time = history.length > 1 ? history.last[0] - history.first[0] : 0
       growth = history.length > 1 ? history.last[1] - history.first[1] : 0
-      seconds = growth > 0 && delta_time > 0 ? (total - used) * delta_time / growth : nil
-      horizon = seconds && seconds.positive? ? "full in ~#{human_duration(seconds)}" : "no growth forecast yet"
+      calibrated = history.length >= 3 && delta_time >= 86_400
+      seconds = calibrated && growth > 0 ? (total - used) * delta_time / growth : nil
+      horizon = if !calibrated
+        "calibrating · needs 24h"
+      elsif seconds && seconds.positive?
+        "full in ~#{human_duration(seconds)}"
+      else
+        "no sustained growth"
+      end
       item(mount, "#{percent(used, total)}% used · #{horizon}", percent(used, total) >= 90 ? "tight" : "observing", human_bytes(total - used) + " free")
     end
     @settings["mount_points"] = points.to_a.last(32).to_h

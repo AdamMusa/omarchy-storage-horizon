@@ -2,11 +2,11 @@
   "format": "qt-aot-qml-module",
   "format_version": 1,
   "qt_version": "6.11.2",
-  "module_uri": "OmarchyUI.Bundles.B1bbe3e8534cebed13c9d",
-  "module_path": "OmarchyUI/Bundles/B1bbe3e8534cebed13c9d",
-  "source_fingerprint": "1bbe3e8534cebed13c9dcea44de4b1cf36eff72631e3298efeb1fb23704baad3",
-  "source_files": 44,
-  "source_bytes": 916105,
+  "module_uri": "OmarchyUI.Bundles.Bf99be4fb7f1c6b7c992b",
+  "module_path": "OmarchyUI/Bundles/Bf99be4fb7f1c6b7c992b",
+  "source_fingerprint": "f99be4fb7f1c6b7c992bb3be689f92c5a531a66d4543f2b785af686b11d7de86",
+  "source_files": 43,
+  "source_bytes": 915780,
   "entry_shims": [
     "App.qml",
     "BarWidget.qml",
@@ -15,13 +15,13 @@
   ],
   "artifacts": [
     {
-      "path": "OmarchyUI/Bundles/B1bbe3e8534cebed13c9d/libomarchy_ui_bundle_b1bbe3e8534cebed13c9d.so",
-      "sha256": "c29139e0ca1aa74418d8681bb0d31a4a231f706e6bcbe55a11fcbfbe5e4fdabf",
-      "bytes": 3512712
+      "path": "OmarchyUI/Bundles/Bf99be4fb7f1c6b7c992b/libomarchy_ui_bundle_bf99be4fb7f1c6b7c992b.so",
+      "sha256": "689eddd6d2d25d09ca351a5faf857304ee28f75368673e8bf90518f19385b47b",
+      "bytes": 3508064
     },
     {
-      "path": "OmarchyUI/Bundles/B1bbe3e8534cebed13c9d/libomarchy_ui_bundle_b1bbe3e8534cebed13c9dplugin.so",
-      "sha256": "fa6573c56660eb5db7fc3ed82647c0a02e8161c5a9843d7094a46c40752bfdbe",
+      "path": "OmarchyUI/Bundles/Bf99be4fb7f1c6b7c992b/libomarchy_ui_bundle_bf99be4fb7f1c6b7c992bplugin.so",
+      "sha256": "93b5b4585c6920ed5fe812cf1fc454a16d202d3fe4c0081fbceb3d42fe0a7fa6",
       "bytes": 24784
     }
   ]

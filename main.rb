@@ -367,54 +367,95 @@ OmarchyUI.plugin do
   end
 
   bar_widget do
-    row spacing: 7 do
-      icon :folder, color: "#a29bfe"
-      text { state.snapshot.fetch("summary") }
+    row spacing: 6 do
+      icon :folder, size: 14, color: "#c6a7ff"
+      text "STORAGE", style: :caption, color: "#c6a7ff"
+      text(style: :caption) { state.snapshot.fetch("summary") }
     end
     on_click { open_panel :storage_horizon }
   end
 
   panel :storage_horizon do
-    scroll width: 660, height: 760 do
+    scroll width: 660, height: 780 do
       dynamic id: :scene, spacing: 16 do
         entries = state.snapshot.fetch("items")
-        history = state.snapshot.fetch("history")
+        percentages = entries.map { |entry| first_number.call(entry.fetch("detail", "")) }
+        average = percentages.empty? ? 0 : percentages.sum / percentages.length
+        tight = entries.count { |entry| entry.fetch("status", "") == "tight" }
 
-        row spacing: 12 do
-          icon :folder, size: 30, color: "#a29bfe"
-          column spacing: 2 do
-            text "Storage Horizon", style: :heading, width: 500
-            text state.snapshot.fetch("summary"), style: :caption, width: 500
-          end
-          action_button :refresh, tooltip: "Refresh", foreground: "#a29bfe" do
-            async(&refresh)
+        column spacing: 2 do
+          text "#{entries.length} filesystems projected against their capacity", style: :caption, width: 610
+          row spacing: 9 do
+            text "Storage", size: 30, bold: true
+            icon :folder, size: 22, color: "#c6a7ff"
+            text "Horizon", size: 30, bold: true, width: 415
+            action_button :refresh, tooltip: "Recalculate horizons", foreground: "#c6a7ff" do
+              async(&refresh)
+            end
           end
         end
 
         separator
-        section_header "Filesystem horizons"
-            if entries.empty?
-              column spacing: 8 do
-                        icon :folder, size: 34, color: "#a29bfe"
-                        text "Nothing to show yet", style: :heading
-                        text "Mounted filesystems will appear with usage and growth forecasts.", style: :caption, wrap: true, width: 560
-                      end
-            else
-              entries.first(12).each_with_index do |entry, index|
-                percent_used = first_number.call(entry.fetch("detail", ""))
-                column spacing: 6 do
-                  row spacing: 8 do
-                    icon :folder, color: status_color.call(entry.fetch("status", ""))
-                    text entry.fetch("title"), style: :heading, width: 380
-                    text "#{percent_used}%", color: status_color.call(entry.fetch("status", "")), width: 54
-                    text entry.fetch("meta", ""), style: :caption, width: 110
-                  end
-                  progress(percent_used, minimum: 0, maximum: 100, width: 590, height: 5, color: status_color.call(entry.fetch("status", "")))
-                      text entry.fetch("detail", "").split(" · ").last.to_s, style: :caption
+        row spacing: 22 do
+          column spacing: 1 do
+            text average.to_s.rjust(2, "0"), size: 56, bold: true, color: "#c6a7ff"
+            text "% AVERAGE USED", style: :caption, color: "#c6a7ff"
+          end
+          column spacing: 5 do
+            text "CAPACITY SKYLINE", style: :caption, color: "#829088"
+            text "                           ○", size: 18, color: "#d8ff73"
+            text "                    ╭─────────────╮", style: :caption, color: "#c6a7ff"
+            text "           ╭────────╯             ╰──────╮", style: :caption, color: "#9a82c9"
+            text "───────────╯                               ╰────", style: :caption, color: "#6d5d91"
+          end
+        end
+        row spacing: 48 do
+          column spacing: 0 do
+            text entries.length.to_s.rjust(2, "0"), size: 28, bold: true
+            text "HORIZONS", style: :caption
+          end
+          column spacing: 0 do
+            text tight.to_s.rjust(2, "0"), size: 28, bold: true,
+                 color: tight.zero? ? "#829088" : "#ff8b8b"
+            text "CAPACITY RISKS", style: :caption
+          end
+        end
+        separator
+        row spacing: 10 do
+          text "FILESYSTEM HORIZONS", size: 12, bold: true, color: "#c6a7ff", width: 440
+          text "FORECAST · 24H CALIBRATION", style: :caption, color: "#829088"
+        end
+
+        if entries.empty?
+          column spacing: 8 do
+            icon :folder, size: 30, color: "#c6a7ff"
+            text "No storage horizon yet", size: 21, bold: true
+            text "Mounted filesystems appear here with usage and growth forecasts.",
+                 style: :caption, wrap: true, width: 560
+          end
+        else
+          entries.first(12).each_with_index do |entry, index|
+            percent_used = first_number.call(entry.fetch("detail", ""))
+            horizon_color = entry.fetch("status", "") == "tight" ? "#ff8b8b" : "#c6a7ff"
+            column spacing: 6 do
+              row spacing: 8 do
+                text (index + 1).to_s.rjust(2, "0"), style: :caption, color: horizon_color, width: 24
+                icon :folder, size: 14, color: horizon_color
+                column spacing: 1 do
+                  text entry.fetch("title"), size: 16, bold: true, width: 390, wrap: true
+                  text entry.fetch("detail", "").split(" · ").last.to_s,
+                       style: :caption, width: 390, color: "#829088", wrap: true
                 end
-                separator unless index == [entries.length, 12].min - 1
+                text "#{percent_used}%", size: 19, bold: true, color: horizon_color, width: 58
+                text entry.fetch("meta", ""), style: :caption, width: 100
               end
+              progress(percent_used, minimum: 0, maximum: 100, width: 590, height: 5, color: horizon_color)
+              text "    #{"━" * [percent_used / 3, 1].max}●#{"·" * [(100 - percent_used) / 3, 1].max}",
+                   style: :caption, color: horizon_color
             end
+            separator unless index == [entries.length, 12].min - 1
+          end
+        end
       end
     end
   end

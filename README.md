@@ -9,6 +9,13 @@ Storage Horizon stores bounded usage samples per filesystem and estimates exhaus
 
 ![Storage Horizon preview](preview.png)
 
+## Built entirely in Ruby
+
+All application behavior, system integration, and UI declarations are authored in
+Ruby. There is no handwritten QML source. Omarchy UI compiles the Ruby-declared UI
+into `OmarchyUI/Bundles/` and emits the three tiny root QML loader shims required by
+the plugin manifest; those shims are generated packaging output.
+
 ## Why this is distinct
 
 Disk meters display current utilization and cleaners reclaim files. Storage Horizon adds historical growth rate and a forecasted full date.
@@ -61,11 +68,6 @@ rm -r ~/.local/state/omarchy-storage-horizon
 - Tags: system, bar, quickshell
 - Kinds: service, bar widget, panel
 - Target: Omarchy Quattro on x86-64 Linux
-
-## Verification
-
-Executable provenance, retained build sources, checksums, and byte-for-byte reproduction
-instructions are grouped in [`audit/`](audit/README.md).
 
 ## License
 

@@ -47,7 +47,7 @@ Add **Storage Horizon** to the Omarchy bar and click its widget to open the pane
 - No telemetry, analytics, remote account, package installation, or privileged command is used.
 - The plugin never overwrites Omarchy, Hyprland, or application configuration.
 
-External runtime tools are limited to standard commands already present on Omarchy when a feature needs them. Missing optional commands degrade to an explicit unavailable state. The exact commands are visible in [`lib/backend.rb`](lib/backend.rb).
+External runtime tools are limited to standard commands already present on Omarchy when a feature needs them. Missing optional commands degrade to an explicit unavailable state. The exact commands are visible in [`main.rb`](main.rb).
 
 ## Remove
 
